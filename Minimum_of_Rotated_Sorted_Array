@@ -1,0 +1,28 @@
+Find the minimum value of a sorted but rotated array.
+
+For example, [5, 6, 7, 1, 2, 3, 4]
+
+class Solution:
+    def findMin(self, nums: List[int]) -> int:
+        n = len(nums)
+        if n < 3:
+            return min(nums)
+        
+        beg, end = 0, n - 1      
+        
+        while beg < end - 1:
+            mid = (beg + end) >> 1
+            # if minimum is found, just output
+            if nums[mid] < nums[mid-1] and nums[mid] < nums[mid+1]:
+                return nums[mid]
+            # if maximum is found，output its next element
+            elif nums[mid] > nums[mid-1] and nums[mid] > nums[mid+1]:
+                return nums[mid+1]
+            # if found a number to the left of minimum, repeat the process with the right-hand side
+            elif nums[mid] > nums[beg]:
+                beg = mid
+            # if found a number to the right of minimum, repeat the process with the left-hand side
+            else:
+                end = mid
+        # if minimum is not found with the process above, it must be the first or last element
+        return min(nums[0], nums[-1])
