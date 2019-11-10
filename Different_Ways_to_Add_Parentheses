@@ -1,0 +1,35 @@
+Adding parentheses can change the results of computations, e.g. "3*4+5*2" can be "3*(4+5)*2 = 54" or "3*(4+5*2) = 42".
+
+Given a string of numbers and operators, find all possible results with different ways of adding parentheses.
+
+import operator
+class Solution:
+    def __init__(self):
+        self.memo = {}
+        
+    def calc(self, a, b, op):
+        if (a, b, op) in self.memo:
+            return self.memo[(a, b, op)]
+        self.memo[(a, b, op)] = op(a, b)
+        return self.memo[(a, b, op)]
+    
+    def diffWaysToCompute(self, input: str):
+	      # if input is a number, just output it
+        if input.isnumeric():
+            return [int(input)]
+
+        res = []
+        for i, char in enumerate(input):
+        # for every operator, split the input string into two parts
+            if char == '*':
+                op = operator.mul
+            elif char == '-':
+                op = operator.sub
+            elif char == '+':
+                op = operator.add
+            else:
+                continue
+            L = self.diffWaysToCompute(input[:i])
+            R = self.diffWaysToCompute(input[i+1:])
+            res += [self.calc(left, right, op) for left in L for right in R]
+        return res
