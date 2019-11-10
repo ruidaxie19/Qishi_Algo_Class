@@ -1,0 +1,30 @@
+def quickSelect(A, k):
+    n = len(A)
+    if k == 0:
+        return []
+    if k >= n:
+        return A
+        
+    # pick the first element as pivot
+    p = 0
+    while True:
+        # partition and recursion
+        # cur is the current index at which to compare with pivot
+        # pre is the index of the first element greater than pivot
+        pre, cur = p+1, p+1
+        while cur < n:
+            if A[cur] < A[p]:
+                A[pre], A[cur] = A[cur], A[pre]
+                pre += 1
+            cur += 1
+        
+        if pre > k:
+            # all k numbers should come before index pre
+            A[p], A[pre-1] = A[pre-1], A[p]
+        elif pre < k:
+            # confirm pre numbers, continue to find the other (k - pre) numbers with pre as pivot
+            A[p], A[pre-1] = A[pre-1], A[p]
+            p = pre
+        else:
+            return max(A[:pre])
+        
