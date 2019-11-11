@@ -1,0 +1,24 @@
+Given a list of distinct positive integers nums, return the largest subset such that for every pair (a, b) of elements in this subset,
+either a|b or b|a.
+
+class Solution:
+    def largestDivisibleSubset(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        if n == 0:
+            return nums
+            
+        nums = sorted(nums)
+        dp = [[x] for x in nums]
+        
+        # for every number c in nums
+        #   if there does not exist a number k in nums such that k|c, then the largest divisible subset that contains c is [c]
+        #   if there exists one or more numbers that divide c evenly, then the largest divisible subset that contains c is 
+        #   the largest divisible subset that contains one of these factors extended by [c]
+        
+        for i, c in enumerate(nums[1:], 1):
+            j = 0
+            while nums[j] * 2 <= c:
+                if c % nums[j] == 0:
+                    dp[i] = max((dp[i], dp[j] + [c]), key=len)
+                j += 1
+        return max(dp, key=len)
