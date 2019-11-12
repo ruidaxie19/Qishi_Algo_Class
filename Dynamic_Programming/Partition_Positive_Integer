@@ -1,0 +1,60 @@
+List all the different ways to partition a positive integer n into the sum of a list of non-increasing integers.
+
+For example, if n = 5, there are 7 ways to partition 5:
+
+5 = 5
+5 = 4+1
+5 = 3+2
+5 = 3+1+1
+5 = 2+2+1
+5 = 2+1+1+1
+5 = 1+1+1+1+1
+
+Let's work through the example of n = 5.
+
+The first number in the list can be any one of [1, 2, 3, 4, 5]. 
+
+After fixing 5, we immediately arrive at a way of partitioning: 5 = 5.
+
+After fixing 4, we arrive at a subproblem of partitioning 1, which is also trivial.
+
+After fixing 3, the remaining subproblem is partitioning 2, which is 2 = 2 and 2 = 1 + 1. Then combine them with 3.
+
+A problem arises when fixing 2, the remaining subproblem is partitioning 3. However, if we allow 3 = 3 in this case, 5 = 2 + 3 will
+be the same as 5 = 3 + 2 in the previous case. Therefore, we need to specify that the remaining 3 can only be partitioned by numbers
+no greater than 2.
+
+As with fixing 1, the remaining subproblem of partitioning 4 will be restrained to only use 1, and therefore only gives 4=1+1+1+1.
+
+
+def ways_of_partition(n):
+    dp = {}
+    
+    # partitioning n with numbers no greater than m
+    def partition_with_max(n, m):
+        res = []
+        # if we already computed and recorded this case, read directly from memory
+        if (n, m) in dp:
+            return dp[(n,m)]
+        
+        # when n and m are both 0, meaning we fix n, output empty list so that "or [[i]]" will be triggered to return [[m]]
+        if n == m == 0:
+            return res
+            
+        for i in range(m, 0, -1):
+            res += [[i] + ls for ls in partition_with_max(n - i, min(n - i, i))] or [[i]]
+        dp[(n, m)] = res
+        return res
+        
+    return partition_with_max(n, n)
+
+if __name__ == '__main__':
+    # input
+    n = 5
+
+    # demonstration
+    ways = ways_of_partition(n)
+    cnt = len(ways)
+    print('There are ' + str(cnt) + ' ways to partition ' + str(n) + ':')
+    for i in range(cnt):
+        print(n, '=', '+'.join(map(str, ways[i])))
